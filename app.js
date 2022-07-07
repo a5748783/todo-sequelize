@@ -16,7 +16,20 @@ app.use(methodOverride('_method'))
 
 // 路由設定
 app.get('/', (req, res) => {
-  res.send('hello world')
+  return Todo.findAll({
+    raw: true,
+    nest: true
+  })
+    .then((todos) => { return res.render('index', { todos: todos }) })
+    .catch((error) => { return res.status(422).json(error) })
+})
+
+
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findByPk(id)
+    .then(todo => res.render('detail', { todo: todo.toJSON() }))
+    .catch(error => console.log(error))
 })
 
 // 登入頁面
